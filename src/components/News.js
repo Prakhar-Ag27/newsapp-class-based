@@ -37,10 +37,7 @@ export class News extends Component {
     if (cdm) {
       this.setState({loading : true})
       this.props.setProgress(20);
-    } else {
-      this.setState({ page: this.state.page + 1 });
-    }
-    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+      const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     cdm && this.props.setProgress(40);
     let parsedData = await data.json();
@@ -50,6 +47,20 @@ export class News extends Component {
       totalResults: parsedData.totalResults,
       loading: false,
     });
+    } else {
+      const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    let data = await fetch(url);
+    cdm && this.props.setProgress(40);
+    let parsedData = await data.json();
+    cdm && this.props.setProgress(100);
+    this.setState({
+      articles: this.state.articles.concat(parsedData.articles),
+      totalResults: parsedData.totalResults,
+      loading: false,
+    });
+      this.setState({ page: this.state.page + 1 });
+    }
+    
   };
 
   async componentDidMount() {
@@ -59,7 +70,7 @@ export class News extends Component {
   render() {
     return (
       <>
-        <h1 className="text-center">
+        <h1 className="text-center" style={{marginTop: '70px'}}>
           NewsMonkey - Top {this.capitalizeFirstLetter(this.props.category)}{" "}
           Headlines
         </h1>
